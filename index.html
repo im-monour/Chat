@@ -8,12 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @media (max-width: 768px) {
-            .mobile-hidden { display: none !important; }
-            .mobile-flex { display: flex !important; }
-        }
-    </style>
 </head>
 <body class="bg-gray-100 h-screen font-sans overflow-hidden">
 
@@ -54,7 +48,7 @@
         <!-- Sidebar (Users List) -->
         <div id="sidebarSection" class="w-full md:w-1/3 border-r border-gray-200 flex flex-col bg-white h-full">
             <!-- User Header -->
-            <div class="p-4 border-b flex items-center justify-between bg-gray-50">
+            <div class="p-4 border-b flex items-center justify-between bg-gray-50 flex-shrink-0">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg" id="currentAvatar">U</div>
                     <div>
@@ -68,7 +62,7 @@
             </div>
 
             <!-- Contact List Title -->
-            <div class="px-4 py-2 bg-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+            <div class="px-4 py-2 bg-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider flex-shrink-0">
                 সব ইউজার আইডি (সবার তালিকা)
             </div>
 
@@ -79,11 +73,11 @@
         </div>
 
         <!-- Chat Area (Chat Page) -->
-        <div id="chatSection" class="w-full md:w-2/3 flex flex-col bg-gray-50 h-full mobile-hidden md:flex">
+        <div id="chatSection" class="w-full md:w-2/3 flex flex-col bg-gray-50 h-full hidden md:flex">
             <!-- Active Chat Header -->
-            <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm">
+            <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm flex-shrink-0">
                 <div class="flex items-center space-x-3">
-                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg">
+                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg p-1">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div class="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-lg" id="activeAvatar">?</div>
@@ -102,8 +96,8 @@
                 </div>
             </div>
 
-            <!-- Input Bar -->
-            <div class="p-3 bg-white border-t flex items-center space-x-2">
+            <!-- Input Bar (Always Fixed at Bottom of Chat Area) -->
+            <div class="p-3 bg-white border-t flex items-center space-x-2 flex-shrink-0">
                 <label class="cursor-pointer text-blue-600 hover:text-blue-800 p-2">
                     <i class="fa-solid fa-paperclip text-xl"></i>
                     <input type="file" id="fileInput" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
@@ -152,8 +146,7 @@
         let isRecording = false;
         let unsubscribeMessages = null;
 
-        // আপনার অ্যাডমিন ইউজারনেম এখানে লিখে দিন (যিনি আইডি ডিলিট করতে পারবেন)
-        const ADMIN_USERNAME = "monour"; // আপনার নামটি এখানে বসিয়ে দেবেন
+        const ADMIN_USERNAME = "monour";
 
         const formatEmail = (username) => {
             const cleanName = username.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -220,7 +213,7 @@
                 const usersList = document.getElementById('usersList');
                 usersList.innerHTML = '';
 
-                const isAdmin = currentUser.displayName.toLowerCase() === ADMIN_USERNAME.toLowerCase();
+                const isAdmin = currentUser.displayName && currentUser.displayName.toLowerCase() === ADMIN_USERNAME.toLowerCase();
 
                 snapshot.forEach((docSnap) => {
                     const uData = docSnap.data();
@@ -228,7 +221,6 @@
                         const div = document.createElement('div');
                         div.className = "p-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50";
                         
-                        // Left side (Avatar and Name click to chat)
                         const infoDiv = document.createElement('div');
                         infoDiv.className = "flex items-center space-x-3 flex-1 overflow-hidden";
                         infoDiv.onclick = () => selectUser(uData.uid, uData.username);
@@ -243,14 +235,13 @@
                         `;
                         div.appendChild(infoDiv);
 
-                        // If current logged-in user is ADMIN, show Delete Button for every user ID
                         if (isAdmin) {
                             const deleteBtn = document.createElement('button');
                             deleteBtn.className = "text-red-500 hover:text-red-700 p-2 transition ml-2";
                             deleteBtn.title = "এই আইডি ডিলিট করুন";
                             deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
                             deleteBtn.onclick = (e) => {
-                                e.stopPropagation(); // prevent chat selection on delete click
+                                e.stopPropagation();
                                 deleteUserAccount(uData.uid, uData.username);
                             };
                             div.appendChild(deleteBtn);
@@ -262,9 +253,8 @@
             });
         }
 
-        // Admin function to delete any user from database (Updates globally)
         window.deleteUserAccount = async (uid, username) => {
-            if (confirm(`আপনি কি সত্যি '${username}' আইডিটি চিরতরে ডিলিট করতে চান?`)) {
+            if (confirm(`আপনি কি সত্যি '${username}' আইডিটি চিরترে ডিলিট করতে চান?`)) {
                 try {
                     await deleteDoc(doc(db, "users", uid));
                     alert("আইডি সফলভাবে ডিলিট করা হয়েছে!");
@@ -287,17 +277,21 @@
             document.getElementById('activeAvatar').innerText = username[0].toUpperCase();
             document.getElementById('activeUserStatus').innerText = "অনলাইন";
             
+            // Show chat section properly across all devices
+            const chatSection = document.getElementById('chatSection');
+            const sidebarSection = document.getElementById('sidebarSection');
+            
+            chatSection.classList.remove('hidden');
             if (window.innerWidth < 768) {
-                document.getElementById('sidebarSection').classList.add('mobile-hidden');
-                document.getElementById('chatSection').classList.remove('mobile-hidden');
+                sidebarSection.classList.add('hidden');
             }
 
             listenMessages();
         };
 
         window.backToSidebar = () => {
-            document.getElementById('sidebarSection').classList.remove('mobile-hidden');
-            document.getElementById('chatSection').classList.add('mobile-hidden');
+            document.getElementById('sidebarSection').classList.remove('hidden');
+            document.getElementById('chatSection').classList.add('hidden');
         };
 
         function listenMessages() {
