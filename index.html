@@ -2,28 +2,23 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Messenger Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger Web App - Admin Control</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-        }
-        /* Netlify badge hidden */
-        a[href*="netlify.com"], .netlify-badge {
-            display: none !important;
+        @media (max-width: 768px) {
+            .mobile-hidden { display: none !important; }
+            .mobile-flex { display: flex !important; }
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans flex flex-col h-full">
+<body class="bg-gray-100 h-screen font-sans overflow-hidden">
 
     <!-- Auth Container (Login / Register) -->
-    <div id="authContainer" class="flex items-center justify-center h-full w-full">
+    <div id="authContainer" class="flex items-center justify-center h-full">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-96 border border-gray-100 m-4">
             <div class="text-center mb-6">
                 <i class="fa-brands fa-facebook-messenger text-blue-600 text-5xl mb-2"></i>
@@ -54,12 +49,12 @@
     </div>
 
     <!-- Main Chat App Container -->
-    <div id="appContainer" class="hidden flex-1 flex h-full max-w-7xl w-full mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg relative">
+    <div id="appContainer" class="hidden flex h-screen max-w-7xl mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg">
         
         <!-- Sidebar (Users List) -->
         <div id="sidebarSection" class="w-full md:w-1/3 border-r border-gray-200 flex flex-col bg-white h-full">
             <!-- User Header -->
-            <div class="p-4 border-b flex items-center justify-between bg-gray-50 flex-shrink-0">
+            <div class="p-4 border-b flex items-center justify-between bg-gray-50">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg" id="currentAvatar">U</div>
                     <div>
@@ -73,7 +68,7 @@
             </div>
 
             <!-- Contact List Title -->
-            <div class="px-4 py-2 bg-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider flex-shrink-0">
+            <div class="px-4 py-2 bg-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
                 সব ইউজার আইডি (সবার তালিকা)
             </div>
 
@@ -84,11 +79,11 @@
         </div>
 
         <!-- Chat Area (Chat Page) -->
-        <div id="chatSection" class="w-full md:w-2/3 flex-col bg-gray-50 h-full hidden md:flex absolute md:relative inset-0 z-20">
+        <div id="chatSection" class="w-full md:w-2/3 flex flex-col bg-gray-50 h-full mobile-hidden md:flex">
             <!-- Active Chat Header -->
-            <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm flex-shrink-0">
+            <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm">
                 <div class="flex items-center space-x-3">
-                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg p-2">
+                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div class="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-lg" id="activeAvatar">?</div>
@@ -100,15 +95,15 @@
             </div>
 
             <!-- Messages Window -->
-            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 pb-24">
+            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3">
                 <div class="text-center text-gray-400 mt-20">
                     <i class="fa-regular fa-comments text-5xl mb-2"></i>
                     <p>যেকোনো আইডিতে ক্লিক করে চ্যাট শুরু করুন!</p>
                 </div>
             </div>
 
-            <!-- Input Bar (Fixed properly at the bottom) -->
-            <div class="absolute bottom-0 left-0 right-0 bg-white border-t p-3 flex items-center space-x-2 shadow-lg z-30">
+            <!-- Input Bar -->
+            <div class="p-3 bg-white border-t flex items-center space-x-2">
                 <label class="cursor-pointer text-blue-600 hover:text-blue-800 p-2">
                     <i class="fa-solid fa-paperclip text-xl"></i>
                     <input type="file" id="fileInput" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
@@ -118,9 +113,9 @@
                     <i class="fa-solid fa-microphone text-xl" id="micIcon"></i>
                 </button>
 
-                <input type="text" id="messageInput" placeholder="মেসেজ লিখুন..." class="flex-1 border rounded-full px-4 py-2.5 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" onkeypress="if(event.key === 'Enter') sendMessage()">
+                <input type="text" id="messageInput" placeholder="মেসেজ লিখুন..." class="flex-1 border rounded-full px-4 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" onkeypress="if(event.key === 'Enter') sendMessage()">
 
-                <button type="button" onclick="sendMessage()" class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition flex-shrink-0 shadow-md">
+                <button type="button" onclick="sendMessage()" class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition flex-shrink-0">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -157,7 +152,8 @@
         let isRecording = false;
         let unsubscribeMessages = null;
 
-        const ADMIN_USERNAME = "monour";
+        // আপনার অ্যাডমিন ইউজারনেম এখানে লিখে দিন (যিনি আইডি ডিলিট করতে পারবেন)
+        const ADMIN_USERNAME = "monour"; // আপনার নামটি এখানে বসিয়ে দেবেন
 
         const formatEmail = (username) => {
             const cleanName = username.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -224,7 +220,7 @@
                 const usersList = document.getElementById('usersList');
                 usersList.innerHTML = '';
 
-                const isAdmin = currentUser.displayName && currentUser.displayName.toLowerCase() === ADMIN_USERNAME.toLowerCase();
+                const isAdmin = currentUser.displayName.toLowerCase() === ADMIN_USERNAME.toLowerCase();
 
                 snapshot.forEach((docSnap) => {
                     const uData = docSnap.data();
@@ -232,6 +228,7 @@
                         const div = document.createElement('div');
                         div.className = "p-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50";
                         
+                        // Left side (Avatar and Name click to chat)
                         const infoDiv = document.createElement('div');
                         infoDiv.className = "flex items-center space-x-3 flex-1 overflow-hidden";
                         infoDiv.onclick = () => selectUser(uData.uid, uData.username);
@@ -246,13 +243,14 @@
                         `;
                         div.appendChild(infoDiv);
 
+                        // If current logged-in user is ADMIN, show Delete Button for every user ID
                         if (isAdmin) {
                             const deleteBtn = document.createElement('button');
                             deleteBtn.className = "text-red-500 hover:text-red-700 p-2 transition ml-2";
                             deleteBtn.title = "এই আইডি ডিলিট করুন";
                             deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
                             deleteBtn.onclick = (e) => {
-                                e.stopPropagation();
+                                e.stopPropagation(); // prevent chat selection on delete click
                                 deleteUserAccount(uData.uid, uData.username);
                             };
                             div.appendChild(deleteBtn);
@@ -264,6 +262,7 @@
             });
         }
 
+        // Admin function to delete any user from database (Updates globally)
         window.deleteUserAccount = async (uid, username) => {
             if (confirm(`আপনি কি সত্যি '${username}' আইডিটি চিরতরে ডিলিট করতে চান?`)) {
                 try {
@@ -288,17 +287,17 @@
             document.getElementById('activeAvatar').innerText = username[0].toUpperCase();
             document.getElementById('activeUserStatus').innerText = "অনলাইন";
             
-            const chatSection = document.getElementById('chatSection');
-            chatSection.classList.remove('hidden');
-            chatSection.style.display = 'flex';
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebarSection').classList.add('mobile-hidden');
+                document.getElementById('chatSection').classList.remove('mobile-hidden');
+            }
 
             listenMessages();
         };
 
         window.backToSidebar = () => {
-            const chatSection = document.getElementById('chatSection');
-            chatSection.classList.add('hidden');
-            chatSection.style.display = 'none';
+            document.getElementById('sidebarSection').classList.remove('mobile-hidden');
+            document.getElementById('chatSection').classList.add('mobile-hidden');
         };
 
         function listenMessages() {
