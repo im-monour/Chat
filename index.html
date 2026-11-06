@@ -2,17 +2,27 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messenger Web App - Admin Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Messenger Web App</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Mobile Dynamic Viewport Fix */
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+        html {
+            height: -webkit-fill-available;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 h-screen font-sans overflow-hidden">
+<body class="bg-gray-100 font-sans overflow-hidden h-screen flex flex-col">
 
     <!-- Auth Container (Login / Register) -->
-    <div id="authContainer" class="flex items-center justify-center h-full">
+    <div id="authContainer" class="flex items-center justify-center h-full flex-1">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-96 border border-gray-100 m-4">
             <div class="text-center mb-6">
                 <i class="fa-brands fa-facebook-messenger text-blue-600 text-5xl mb-2"></i>
@@ -42,8 +52,8 @@
         </div>
     </div>
 
-    <!-- Main Chat App Container -->
-    <div id="appContainer" class="hidden flex h-screen max-w-7xl mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg">
+    <!-- Main Chat App Container (Responsive for TV, Desktop & Phone) -->
+    <div id="appContainer" class="hidden flex-1 flex h-full max-w-7xl w-full mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg">
         
         <!-- Sidebar (Users List) -->
         <div id="sidebarSection" class="w-full md:w-1/3 border-r border-gray-200 flex flex-col bg-white h-full">
@@ -73,7 +83,7 @@
         </div>
 
         <!-- Chat Area (Chat Page) -->
-        <div id="chatSection" class="w-full md:w-2/3 flex flex-col bg-gray-50 h-full hidden md:flex">
+        <div id="chatSection" class="w-full md:w-2/3 flex-col bg-gray-50 h-full hidden md:flex">
             <!-- Active Chat Header -->
             <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm flex-shrink-0">
                 <div class="flex items-center space-x-3">
@@ -89,15 +99,15 @@
             </div>
 
             <!-- Messages Window -->
-            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3">
+            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 pb-6">
                 <div class="text-center text-gray-400 mt-20">
                     <i class="fa-regular fa-comments text-5xl mb-2"></i>
                     <p>যেকোনো আইডিতে ক্লিক করে চ্যাট শুরু করুন!</p>
                 </div>
             </div>
 
-            <!-- Input Bar (Always Fixed at Bottom of Chat Area) -->
-            <div class="p-3 bg-white border-t flex items-center space-x-2 flex-shrink-0">
+            <!-- Input Bar (Positioned nicely above bottom navigation/keyboards) -->
+            <div class="p-3 md:p-4 bg-white border-t flex items-center space-x-2 flex-shrink-0 shadow-lg pb-5 md:pb-4">
                 <label class="cursor-pointer text-blue-600 hover:text-blue-800 p-2">
                     <i class="fa-solid fa-paperclip text-xl"></i>
                     <input type="file" id="fileInput" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
@@ -107,9 +117,9 @@
                     <i class="fa-solid fa-microphone text-xl" id="micIcon"></i>
                 </button>
 
-                <input type="text" id="messageInput" placeholder="মেসেজ লিখুন..." class="flex-1 border rounded-full px-4 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" onkeypress="if(event.key === 'Enter') sendMessage()">
+                <input type="text" id="messageInput" placeholder="মেসেজ লিখুন..." class="flex-1 border rounded-full px-4 py-2.5 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" onkeypress="if(event.key === 'Enter') sendMessage()">
 
-                <button type="button" onclick="sendMessage()" class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition flex-shrink-0">
+                <button type="button" onclick="sendMessage()" class="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition flex-shrink-0 shadow-md">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -254,7 +264,7 @@
         }
 
         window.deleteUserAccount = async (uid, username) => {
-            if (confirm(`আপনি কি সত্যি '${username}' আইডিটি চিরترে ডিলিট করতে চান?`)) {
+            if (confirm(`আপনি কি সত্যি '${username}' আইডিটি চিরতরে ডিলিট করতে চান?`)) {
                 try {
                     await deleteDoc(doc(db, "users", uid));
                     alert("আইডি সফলভাবে ডিলিট করা হয়েছে!");
@@ -277,11 +287,12 @@
             document.getElementById('activeAvatar').innerText = username[0].toUpperCase();
             document.getElementById('activeUserStatus').innerText = "অনলাইন";
             
-            // Show chat section properly across all devices
             const chatSection = document.getElementById('chatSection');
             const sidebarSection = document.getElementById('sidebarSection');
             
             chatSection.classList.remove('hidden');
+            chatSection.style.display = 'flex';
+            
             if (window.innerWidth < 768) {
                 sidebarSection.classList.add('hidden');
             }
@@ -292,6 +303,7 @@
         window.backToSidebar = () => {
             document.getElementById('sidebarSection').classList.remove('hidden');
             document.getElementById('chatSection').classList.add('hidden');
+            document.getElementById('chatSection').style.display = '';
         };
 
         function listenMessages() {
