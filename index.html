@@ -14,12 +14,21 @@
             margin: 0;
             overflow: hidden;
         }
-        /* Hide all Netlify badges, boxes and banners completely */
-        a[href*="netlify.com"], .netlify-badge, div[id^="netlify"], iframe[id^="netlify"] {
+        /* Aggressive Netlify Badge & Floating Button Removal */
+        a[href*="netlify.com"], 
+        .netlify-badge, 
+        div[id^="netlify"], 
+        iframe[id^="netlify"],
+        iframe[src*="netlify"],
+        div:has(> a[href*="netlify.com"]) {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
             pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            position: absolute !important;
+            z-index: -9999 !important;
         }
     </style>
 </head>
