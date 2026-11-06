@@ -9,20 +9,17 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Mobile Dynamic Viewport Fix */
-        body {
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-        }
-        html {
-            height: -webkit-fill-available;
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans overflow-hidden h-screen flex flex-col">
+<body class="bg-gray-100 font-sans flex flex-col h-full">
 
     <!-- Auth Container (Login / Register) -->
-    <div id="authContainer" class="flex items-center justify-center h-full flex-1">
+    <div id="authContainer" class="flex items-center justify-center h-full w-full">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-96 border border-gray-100 m-4">
             <div class="text-center mb-6">
                 <i class="fa-brands fa-facebook-messenger text-blue-600 text-5xl mb-2"></i>
@@ -52,8 +49,8 @@
         </div>
     </div>
 
-    <!-- Main Chat App Container (Responsive for TV, Desktop & Phone) -->
-    <div id="appContainer" class="hidden flex-1 flex h-full max-w-7xl w-full mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg">
+    <!-- Main Chat App Container -->
+    <div id="appContainer" class="hidden flex-1 flex h-full max-w-7xl w-full mx-auto bg-white shadow-2xl overflow-hidden md:my-2 md:h-[calc(100vh-1rem)] md:rounded-lg relative">
         
         <!-- Sidebar (Users List) -->
         <div id="sidebarSection" class="w-full md:w-1/3 border-r border-gray-200 flex flex-col bg-white h-full">
@@ -83,11 +80,11 @@
         </div>
 
         <!-- Chat Area (Chat Page) -->
-        <div id="chatSection" class="w-full md:w-2/3 flex-col bg-gray-50 h-full hidden md:flex">
+        <div id="chatSection" class="w-full md:w-2/3 flex-col bg-gray-50 h-full hidden md:flex absolute md:relative inset-0 z-20">
             <!-- Active Chat Header -->
             <div class="p-3 md:p-4 border-b bg-white flex items-center justify-between shadow-sm flex-shrink-0">
                 <div class="flex items-center space-x-3">
-                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg p-1">
+                    <button onclick="backToSidebar()" class="md:hidden text-gray-600 hover:text-blue-600 mr-1 text-lg p-2">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div class="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-lg" id="activeAvatar">?</div>
@@ -99,15 +96,15 @@
             </div>
 
             <!-- Messages Window -->
-            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 pb-6">
+            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 pb-24">
                 <div class="text-center text-gray-400 mt-20">
                     <i class="fa-regular fa-comments text-5xl mb-2"></i>
                     <p>যেকোনো আইডিতে ক্লিক করে চ্যাট শুরু করুন!</p>
                 </div>
             </div>
 
-            <!-- Input Bar (Positioned nicely above bottom navigation/keyboards) -->
-            <div class="p-3 md:p-4 bg-white border-t flex items-center space-x-2 flex-shrink-0 shadow-lg pb-5 md:pb-4">
+            <!-- Input Bar (Fixed properly at the bottom) -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white border-t p-3 flex items-center space-x-2 shadow-lg z-30">
                 <label class="cursor-pointer text-blue-600 hover:text-blue-800 p-2">
                     <i class="fa-solid fa-paperclip text-xl"></i>
                     <input type="file" id="fileInput" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
@@ -288,22 +285,16 @@
             document.getElementById('activeUserStatus').innerText = "অনলাইন";
             
             const chatSection = document.getElementById('chatSection');
-            const sidebarSection = document.getElementById('sidebarSection');
-            
             chatSection.classList.remove('hidden');
             chatSection.style.display = 'flex';
-            
-            if (window.innerWidth < 768) {
-                sidebarSection.classList.add('hidden');
-            }
 
             listenMessages();
         };
 
         window.backToSidebar = () => {
-            document.getElementById('sidebarSection').classList.remove('hidden');
-            document.getElementById('chatSection').classList.add('hidden');
-            document.getElementById('chatSection').style.display = '';
+            const chatSection = document.getElementById('chatSection');
+            chatSection.classList.add('hidden');
+            chatSection.style.display = 'none';
         };
 
         function listenMessages() {
